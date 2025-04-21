@@ -28,7 +28,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
-
         this.modelMapper = modelMapper;
     }
     @Override
