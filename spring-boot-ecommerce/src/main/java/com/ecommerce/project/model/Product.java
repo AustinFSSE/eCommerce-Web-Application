@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
-@Table
+@Table(name = "products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,17 +22,25 @@ public class Product {
     @NotBlank
     @Size(min=3, message = "Product name must contain at-least 3 letters")
     private String productName;
+
     private String image;
 
     @NotBlank
     @Size(min=6, message = "Product name must contain at-least 6 letters")
     private String description;
+
     private Integer quantity;
     private double price;
     private double specialPrice;
+
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
     private double discount;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User user;
 
 }
