@@ -43,6 +43,11 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @ToString.Exclude
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE,  CascadeType.REMOVE}, orphanRemoval = true)
+    private Cart cart;
+
+
     public User(String userName, String email, String password) {
         this.userName = userName;
         this.password = password;
