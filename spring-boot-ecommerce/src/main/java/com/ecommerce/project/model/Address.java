@@ -13,14 +13,14 @@ import java.util.List;
 
 
 @Entity
+@Table(name = "addresses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name= "addresses")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long addressId;
 
     @NotBlank
     @Size(min = 5, message = "Street name must be atleast 5 characters")
@@ -43,19 +43,19 @@ public class Address {
     private String country;
 
     @NotBlank
-    @Size(min = 6, message = "Pincode must be atleast 2 characters")
+    @Size(min = 5, message = "Pincode must be atleast 5 characters")
     private String pincode;
 
-    @ManyToMany(mappedBy = "addresses")
-    @ToString.Exclude
-    private List <User> users = new ArrayList <>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Address(String pincode, String country, String state, String city, String buildingName, String street) {
-        this.pincode = pincode;
-        this.country = country;
-        this.state = state;
-        this.city = city;
-        this.buildingName = buildingName;
+    public Address(String street, String buildingName, String city, String state, String country, String pincode) {
         this.street = street;
+        this.buildingName = buildingName;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.pincode = pincode;
     }
 }

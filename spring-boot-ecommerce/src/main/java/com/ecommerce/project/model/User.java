@@ -70,11 +70,9 @@ public class User {
     @ToString.Exclude
     private Set<Product>  products = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_address",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "address_id"))
     @Getter
+    @Setter
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List <Address> addresses = new ArrayList <>();
 
 }
