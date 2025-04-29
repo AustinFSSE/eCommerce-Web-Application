@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {FaShoppingCart} from "react-icons/fa";
+import ProductViewModal from "./ProductViewModal.jsx";
 
 const ProductCard = ({
     productId,
@@ -14,7 +15,7 @@ const ProductCard = ({
 
     const [openProductViewModal, setOpenProductViewModal] = useState(false);
     const btnLoader = false;
-    const [selectedViewProduct, setSelectedViewProduct] = useState(null);
+    const [selectedViewProduct, setSelectedViewProduct] = useState(false);
     const isAvailable = quantity && Number(quantity) > 0;
 
     const handleProductView = (product) => {
@@ -75,16 +76,33 @@ const ProductCard = ({
                   <button
                       disabled={!isAvailable || btnLoader}
                       className={`bg-blue-500
-                      ${isAvailable ? "opacity-100 hover:bg-blue-600" : "opacity-70"}
-                      text-white text-sm py-2 px-3 rounded-lg items-center transition-colors duration-300 w-36 flex justify-center
-                      `} onClick={handleProductView}>
+                          ${isAvailable ? "opacity-100 hover:bg-blue-600" : "opacity-70"}
+                          text-white text-sm py-2 px-3 rounded-lg items-center transition-colors duration-300 w-36 flex justify-center
+                          `} onClick={() => {
+                      handleProductView({
+                          id: productId,
+                          productName,
+                          image,
+                          description,
+                          quantity,
+                          price,
+                          discount,
+                          specialPrice,
+                      })
+                  }}>
                       <FaShoppingCart className={"mr-2"}/>
                           {isAvailable ? "Add to Cart" : "Out of Stock"}
                   </button>
               </div>
           </div>
+          <ProductViewModal
+          open={openProductViewModal}
+          setOpen={setOpenProductViewModal}
+          product={selectedViewProduct}
+          isAvailable={isAvailable}
+          />
       </div>
-    );
+    )
 }
 
 export default ProductCard;
