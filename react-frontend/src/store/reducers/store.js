@@ -1,9 +1,14 @@
 import {configureStore} from "@reduxjs/toolkit";
+import {productReducer} from "./ProductReducer.js";
+import {errorReducer} from "./errorReducer.js";
 
 
 
 export const store = configureStore({
-    reducer: {},
+    reducer: {
+        products: productReducer,
+        error: errorReducer,
+    },
     preloadedState: {},
 });
 

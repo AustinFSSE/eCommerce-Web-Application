@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,6 +54,10 @@ public class ProductServiceImpl implements ProductService {
     @Value("${project.image}")
     private String path;
 
+    @Value("${image.base.url}")
+    private String baseUrl;
+
+
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
 
@@ -82,6 +87,48 @@ public class ProductServiceImpl implements ProductService {
         }
 
     }
+
+    @Override
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        Specification<Product> spec = Specification.where(null);
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), "%" + keyword.toLowerCase() + "%"));
+        }
+
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("category").get("categoryName"), category));
+        }
+
+        Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
+
+        List<Product> products = pageProducts.getContent();
+
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> {
+                    ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+                    productDTO.setImage(constructImageURL(product.getImage()));
+                    return productDTO;
+                })
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        productResponse.setPageNumber(pageProducts.getNumber());
+        productResponse.setPageSize(pageProducts.getSize());
+        productResponse.setTotalElements(pageProducts.getTotalElements());
+        productResponse.setTotalPages(pageProducts.getTotalPages());
+        productResponse.setLastPage(pageProducts.isLast());
+        return productResponse;
+    }
+
+
     @Override
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         Product productFromDb = productRepository.findById(productId)
@@ -92,6 +139,7 @@ public class ProductServiceImpl implements ProductService {
         productFromDb.setProductName(product.getProductName());
         productFromDb.setDescription(product.getDescription());
         productFromDb.setQuantity(product.getQuantity());
+        productFromDb.setImage("placeHolder600x400.png");
         productFromDb.setDiscount(product.getDiscount());
         productFromDb.setPrice(product.getPrice());
         productFromDb.setSpecialPrice(product.getSpecialPrice());
@@ -145,32 +193,9 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 
-    @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
 
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-
-        Page <Product> productPage = productRepository.findAll(pageDetails);
-
-        List <Product> products = productPage.getContent();
-        if (products.isEmpty()) {
-            throw new APIException("No products found");
-        }
-        List<ProductDTO> productDTOS = products.stream()
-                .map(p -> modelMapper.map(p, ProductDTO.class))
-                .toList();
-
-        ProductResponse productResponse = new ProductResponse();
-        productResponse.setContent(productDTOS);
-        productResponse.setPageNumber(productPage.getNumber());
-        productResponse.setPageSize(productPage.getSize());
-        productResponse.setTotalPages(productPage.getTotalPages());
-        productResponse.setTotalElements(productPage.getTotalElements());
-        productResponse.setTotalPages(productPage.isLast() ? productPage.getTotalPages() : productPage.getTotalPages() + 1);
-        return productResponse;
+    private String constructImageURL(String imageName) {
+        return baseUrl.endsWith("/") ? baseUrl + imageName : baseUrl + "/" + imageName;
     }
     @Override
     public ProductResponse searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {

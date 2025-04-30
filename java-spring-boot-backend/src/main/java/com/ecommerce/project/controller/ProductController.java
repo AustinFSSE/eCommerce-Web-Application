@@ -1,10 +1,13 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.config.AppConstants;
+import com.ecommerce.project.model.User;
 import com.ecommerce.project.payload.ProductDTO;
 import com.ecommerce.project.payload.ProductResponse;
 import com.ecommerce.project.service.ProductService;
+import com.ecommerce.project.util.AuthUtil;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -17,6 +20,8 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class ProductController {
 
+    @Autowired
+    AuthUtil authUtil;
     ProductService productService;
 
     ProductController(ProductService productService) {
@@ -26,18 +31,20 @@ public class ProductController {
     @PostMapping("/admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId) {
-
+        User user = authUtil.loggedInUser();
         ProductDTO savedProductDTO = productService.addProduct(categoryId, productDTO);
     return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false)Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER, required = false) String sortOrder) {
-        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+        ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder, keyword, category);
 
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
@@ -71,6 +78,7 @@ public class ProductController {
 
     @DeleteMapping("/admin/products/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId) {
+
         ProductDTO productDTO = productService.deleteProduct(productId);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
