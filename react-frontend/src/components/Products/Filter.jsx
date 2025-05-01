@@ -6,13 +6,8 @@ import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 
 
 
-const Filter = () => {
-    const categories = [
-        { categoryId: 1, categoryName: "Electronics"},
-        { categoryId: 2, categoryName: "Clothing"},
-        { categoryId: 3, categoryName: "Furniture"},
-        { categoryId: 4, categoryName: "Books"},
-    ];
+const Filter = ({categories}) => {
+
     const [category, setCategory] = useState("all");
     const [sortOrder, setSortOrder] = useState("asc");
     const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +30,9 @@ const Filter = () => {
     }, [searchParams]);
 
     useEffect(() => {
+
         const handler = setTimeout(() => {
+
             if (searchTerm) {
                 searchParams.set("keyword", searchTerm);
             } else {
