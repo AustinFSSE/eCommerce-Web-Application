@@ -5,6 +5,8 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import './App.css'
 import Home from "./components/Home/Home.jsx";
 import Navbar from "./components/shared/Navbar.jsx";
+import About from "./components/About.jsx";
+import Contact from "./components/Contact.jsx";
 
 
 function App() {
@@ -14,8 +16,10 @@ function App() {
     <Router>
         <Navbar />
         <Routes>
-            <Route path="/" element={ <Home />}  />
+            <Route path="/" element={ <Home />}              />
             <Route path="/products" element={ <Products />}  />
+            <Route path={"/about"} element={ <About />}      />
+            <Route path={"/contact"} element={ <Contact />}  />
         </Routes>
     </Router>
   )

@@ -1,6 +1,14 @@
+
+
+
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import 'swiper/css/effect-fade';
+import 'swiper/css/autoplay';
+
+// Import Swiper styles
 import { Swiper, SwiperSlide } from 'swiper/react';
-
-
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
@@ -11,10 +19,10 @@ import 'swiper/css/autoplay';
 import 'swiper/css';
 import { Autoplay, Pagination, EffectFade, Navigation } from 'swiper/modules';
 
-import bannerLists from '../../utils/index.js';
+import { bannerLists } from '../../utils';
 import { Link } from 'react-router-dom';
 
-const colors = ["bg-banner-color1", "bg-banner-color2", "bg-banner-color3"];
+const colors = ["bg-yellow-400", "bg-green-600", "bg-red-500"];
 
 const HeroBanner = () => {
     return (
@@ -33,13 +41,7 @@ const HeroBanner = () => {
 
                 {bannerLists.map((item, i) => (
                     <SwiperSlide key={item.id}>
-                        <div className={`carousel-item rounded-md sm:h-[500px] h-96 ${
-                            i === 0
-                                ? "bg-banner-color1"
-                                : i === 1
-                                    ? "bg-banner-color2"
-                                    : "bg-banner-color3"
-                        }`}>
+                        <div className={`carousel-item rounded-md sm:h-[500px] h-96 ${colors[i]}`}>
                             <div className='flex items-center justify-center'>
                                 <div className='hidden lg:flex justify-center w-1/2 p-8'>
                                     <div className='text-center'>
