@@ -1,4 +1,4 @@
-import {FaEnvelope, FaPhone, FaStop} from "react-icons/fa";
+import {FaEnvelope, FaPhone} from "react-icons/fa";
 import {GiStopSign} from "react-icons/gi";
 
 

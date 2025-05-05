@@ -2,6 +2,9 @@ import {useState} from "react";
 import {FaShoppingCart} from "react-icons/fa";
 import ProductViewModal from "./ProductViewModal.jsx";
 import truncateText from "../../utils/truncateText.js";
+import {useDispatch} from "react-redux";
+import {addToCart} from "../../store/actions/index.js";
+import toast from "react-hot-toast";
 
 const ProductCard = ({
     productId,
@@ -19,6 +22,7 @@ const ProductCard = ({
     const btnLoader = false;
     const [selectedViewProduct, setSelectedViewProduct] = useState(false);
     const isAvailable = quantity && Number(quantity) > 0;
+    const dispatch = useDispatch();
 
     const handleProductView = (product) => {
         if (!about) {
@@ -26,6 +30,9 @@ const ProductCard = ({
             setOpenProductViewModal(true);
         }
 
+    }
+    const addToCartHandler = (cartItems) => {
+        dispatch(addToCart(cartItems, 1, toast));
     }
 
     return (
@@ -83,19 +90,17 @@ const ProductCard = ({
                           disabled={!isAvailable || btnLoader}
                           className={`bg-blue-500
                           ${isAvailable ? "opacity-100 hover:bg-blue-600" : "opacity-70"}
-                          text-white text-sm py-2 px-3 rounded-lg items-center transition-colors duration-300 w-36 flex justify-center
-                          `} onClick={() => {
-                          handleProductView({
-                              id: productId,
-                              productName,
+      text-white text-sm py-2 px-3 rounded-lg items-center transition-colors duration-300 w-36 flex justify-center`}
+                          onClick={() => addToCartHandler({
                               image,
+                              productName,
                               description,
                               quantity,
                               price,
                               discount,
                               specialPrice,
-                          })
-                      }}>
+                              productId,
+                          })}>
                           <FaShoppingCart className={"mr-2"}/>
                           {isAvailable ? "Add to Cart" : "Out of Stock"}
                       </button>
