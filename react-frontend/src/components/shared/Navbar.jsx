@@ -5,12 +5,15 @@ import {Badge} from "@mui/material";
 import {useState} from "react";
 import {RxCross2} from "react-icons/rx";
 import {IoIosMenu} from "react-icons/io";
+import {useSelector} from "react-redux";
 
 
 const Navbar = () => {
     const path = useLocation().pathname;
 
     const [navbarOpen, setNavbarOpen] = useState(false);
+
+    const {cart} = useSelector((state) => state.carts);
 
     return (
         <div className={"h-[80px] bg-blue-950 text-white z-50 flex items center sticky top-0"}>
@@ -49,7 +52,7 @@ const Navbar = () => {
                         <Link to={"/cart"} className={`${path === "/cart" ? "text-white font-bold" : "text-blue-300"}`}>
                             <Badge
                                 showZero={true}
-                                badgeContent={0}
+                                badgeContent={cart?.length || 0}
                                 color="primary"
                                 overlap={"circular"}
                                 anchorOrigin={{

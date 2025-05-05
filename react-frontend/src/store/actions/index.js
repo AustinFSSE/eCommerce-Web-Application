@@ -1,4 +1,5 @@
 import api from "../../API/api"
+import toast from "react-hot-toast";
 
 export const fetchProducts = (queryString) => async (dispatch) => {
     try {
@@ -106,5 +107,22 @@ export const increaseCartQuantity =
             }
 };
 
+export const decreaseCartQuantity =
+    (data, newQuantity) => (dispatch, getState) => {
+            dispatch({
+                type: "DECREASE_CART_QUANTITY",
+                payload: {
+                    ...data,
+                    quantity: newQuantity,
+                }
+            });
+            toast.success(`Removed 1 ${data.productName} from cart!`);
+            localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+        }
 
+export const removeFromCart = (data, toast) => (dispatch, getState) => {
+    dispatch({type: "REMOVE_ITEM_FROM_CART", payload: data,});
+    toast.success(`Removed ${data.productName} from cart!`);
+    localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
+}
 
